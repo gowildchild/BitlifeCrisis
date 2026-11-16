@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org",
+  "meta": {
+    "project": "BitlifeCrisis",
+    "prefix": "btlc",
+    "version": "0.1.0",
+    "author": "Gunther Voet",
+    "license": "PolyForm-Noncommercial-1.0.0",
+    "endianness": "big",
+    "atom_width_bytes": 8
+  },
+  "register_abi": {
+    "register_count": 16,
+    "register_width_bits": 32,
+    "sub_slices": {
+      "BOOL":   { "bits": 1,  "mask": "0x00000001", "max_slices": 32 },
+      "NIBBLE": { "bits": 4,  "mask": "0x0000000F", "max_slices": 8 },
+      "BYTE":   { "bits": 8,  "mask": "0x000000FF", "max_slices": 4 },
+      "WORD":   { "bits": 16, "mask": "0x0000FFFF", "max_slices": 2 },
+      "DOUBLE": { "bits": 32, "mask": "0xFFFFFFFF", "max_slices": 1 }
+    },
+    "standard_register_roles": {
+      "R0":  "outcome_state_flag",
+      "R1":  "fault_delta_accumulator",
+      "R2":  "scratchpad_a",
+      "R3":  "scratchpad_b",
+      "R4":  "telemetry_src_ip_or_id",
+      "R5":  "telemetry_mask_or_privacy_key",
+      "R6":  "telemetry_src_asn",
+      "R7":  "telemetry_dst_asn_or_nonce",
+      "R8":  "temporal_current_epoch",
+      "R9":  "temporal_expiration_ceiling",
+      "R10": "stateless_counter_pair_hi_up_lo_down",
+      "R11": "unified_bitspace_tier",
+      "R12": "policy_or_feature_mask_a",
+      "R13": "policy_or_feature_mask_b",
+      "R14": "addon_binding_a",
+      "R15": "addon_binding_b"
+    }
+  },
+  "core_lexicon": {
+    "alu_logic_8bit": {
+      "Operators": {
+        "NONE": 0, "LESSER": 1, "BIGGER": 2, "MIN": 4, "MAX": 8,
+        "IN": 16, "OUT": 32, "INCLUDES": 64, "EXCLUDES": 128
+      },
+      "Compares": {
+        "NONE": 0, "EQUAL": 1, "APART": 2, "SIMILAR": 4,
+        "DIFFERENT": 8, "EVER": 16, "NEVER": 32
+      },
+      "Shifts": {
+        "NONE": 0, "OR": 1, "AND": 2, "IS": 4, "NOT": 8,
+        "XOR": 16, "INVERT": 32, "SHL": 64, "SHR": 128
+      },
+      "Arithmics": {
+        "NONE": 0, "ADD": 1, "INC": 2, "SUB": 4, "DEC": 8,
+        "UP": 16, "DOWN": 32, "MULTIPLY": 64, "DIVIDE": 128
+      },
+      "Evaluation": {
+        "NONE": 0, "LOWER": 1, "HIGHER": 2, "EQUAL": 4,
+        "ABOVE": 8, "BELOW": 16, "ZERO": 32, "NON": 64
+      },
+      "Execution": {
+        "NONE": 0, "JUMP": 1, "RETURN": 2, "GET": 4,
+        "PUT": 8, "CALL": 16, "RET": 32
+      },
+      "Memory": {
+        "NONE": 0, "NOP": 1, "DROP": 2, "ALLOC": 4, "DEALLOC": 8,
+        "PUSH": 16, "POP": 32, "INGEST": 64, "REMOVE": 128
+      },
+      "Validate": {
+        "NOP": 0, "CMP": 1, "NOT": 2
+      }
+    },
+    "lifecycle_permissions_8bit": {
+      "Grants": {
+        "NONE": 0, "NO": 1, "YES": 2, "REJECT": 4, "ACCEPT": 8,
+        "DROP": 16, "TAKE": 32, "DENY": 64, "GRANT": 128
+      },
+      "Permissions": {
+        "NONE": 0, "CREATE": 1, "READ": 2, "UPDATE": 4, "DELETE": 8,
+        "WRITE": 16, "EXTEND": 32, "EXPIRE": 64, "REVOKE": 128
+      },
+      "Lifecycle": {
+        "NONE": 0, "NEW": 1, "EXISTS": 2, "UNIQUE": 4,
+        "COPY": 8, "MOVE": 16, "OPEN": 32, "CLOSE": 64
+      },
+      "Controls": {
+        "NONE": 0, "SKIP": 1, "NEXT": 2, "REWIND": 4, "FORWARD": 8,
+        "PLAY": 16, "STOP": 32, "RESTART": 64, "RESET": 128
+      },
+      "Status": {
+        "NONE": 0, "OPEN": 1, "CLOSED": 2, "INIT": 4, "IDLE": 8, "BUSY": 16
+      },
+      "Response": {
+        "NONE": 0, "OK": 1, "ERROR": 2, "CRITICAL": 4, "SIGNAL": 8
+      }
+    },
+    "spatio_temporal_policy_16bit": {
+      "Times": {
+        "NONE": 0, "PAST": 1, "FUTURE": 2, "EARLY": 4, "LATE": 8,
+        "ALWAYS": 16, "NEVER": 32, "PRESENT": 64, "AT": 128,
+        "PASSED": 256, "YOUNGER": 512, "OLDER": 1024
+      },
+      "Position": {
+        "NONE": 0, "BEGIN": 1, "END": 2, "START": 4, "STOP": 8,
+        "FAR": 16, "CLOSEBY": 32, "HERE": 64, "THERE": 128
+      },
+      "State": {
+        "NONE": 0, "NEAR": 1, "FAR": 2, "FREE": 4, "DETAINED": 8,
+        "BUSY": 16, "DEFLECT": 32, "ATTRACT": 64
+      },
+      "Kinetic": {
+        "NONE": 0, "INTERNAL": 1, "EXTERNAL": 2, "INSIDE": 4, "OUTSIDE": 8,
+        "INNER": 16, "OUTER": 32, "CORE": 64, "LAYER": 128,
+        "INWARDS": 256, "OUTWARDS": 512
+      },
+      "Age": {
+        "NONE": 0, "YOUNG": 1, "OLD": 2, "FRESH": 4,
+        "STALE": 8, "NEW": 16, "EXIST": 32
+      },
+      "Weights": {
+        "NONE": 0, "LESSER": 1, "BIGGER": 2, "MINIMAL": 4, "MAXIMAL": 8,
+        "LIGHT": 16, "HEAVY": 32, "ESTIMATED": 64, "MODIFIER": 128,
+        "DOWNSIZE": 256, "SCALE": 512
+      },
+      "Policy": {
+        "NONE": 0, "ASK": 1, "DEMAND": 2, "RECOMMEND": 4, "REQUIRE": 8,
+        "POLICY": 16, "BOUNDS": 32, "LIMIT": 64, "GRANT": 128,
+        "AVOID": 256, "PRELUDE": 512, "INTRO": 1024, "OUTRO": 2048,
+        "ABSOLUTE": 4096
+      }
+    },
+    "datatypes_metadata_16bit": {
+      "Grouping": {
+        "NONE": 0, "SINGLE": 1, "MULTIPLE": 2, "SOLO": 4, "DUO": 8,
+        "SELECT": 16, "CHAIN": 32, "AT_START": 64, "AT_END": 128
+      },
+      "Store": {
+        "NONE": 0, "KEY": 1, "VALUE": 2, "FIELD": 4,
+        "RESULT": 8, "SELECT": 16, "STRUCTURE": 32
+      },
+      "Type": {
+        "NONE": 0, "ALPHA": 1, "NUMERIC": 2, "SINGLE": 4, "MULTIPLE": 8,
+        "LIST": 16, "DICT": 32, "OBJECT": 64, "COLLECTION": 128
+      },
+      "Integrity": {
+        "NONE": 0, "EXACT": 1, "VERIFY": 2, "AUDIT": 4, "HASHED": 8,
+        "TSTAMPED": 16, "NOTARIZED": 32, "PUBLISHED": 64
+      },
+      "Crypto": {
+        "NONE": 0, "WITH": 1, "TIMSTAMP": 2, "LOCATION": 4, "IDENTITY": 8,
+        "WITNESS": 16, "SIGNED": 32, "PRIVATE": 64, "WITHOUT": 128,
+        "EXTRACT": 256, "INJECT": 512
+      },
+      "Amount": {
+        "NONE": 0, "A1": 1, "A2": 2, "A4": 4, "A8": 8,
+        "A16": 16, "A32": 32, "A64": 64, "A128": 128
+      },
+      "Quantify": {
+        "NONE": 0, "Q1": 1, "Q2": 2, "Q3": 4, "Q5": 8,
+        "Q10": 16, "Q100": 32, "Q1000": 64, "Q10000": 128
+      },
+      "Datasize": {
+        "NONE": 0, "BOOL": 1, "NIBBLE": 2, "BYTE": 4, "WORD": 8,
+        "DOUBLE": 16, "DYNAMIC": 32, "ARRAY": 64
+      }
+    },
+    "networking_telemetry_32bit": {
+      "Boundary": {
+        "NONE": 0, "SRC": 1, "DST": 2, "SOURCE": 4, "TARGET": 8, "ORIGIN": 16
+      },
+      "SourceTargetNet": {
+        "NONE": 0, "IP": 1, "RANGE": 2, "ASN": 4, "ORG": 8, "MEDIUM": 16
+      }
+    }
+  },
+  "modular_addons": {
+    "_comment": "Extensible reality-verification plugins. New addons append here without mutating core_lexicon.",
+    "0x01_ipv4_cidr_check": {
+      "addon_id": 1,
+      "name": "IPv4 Subnet / CIDR Reality Attestation",
+      "description": "Masks live 32-bit wire IP against CIDR mask and compares against expected network prefix.",
+      "bound_registers": {
+        "live_ip_reg": "R4",
+        "mask_scratch_reg": "R5"
+      },
+      "required_lexicon": ["Operators.IN", "Compares.EQUAL", "Shifts.AND", "SourceTargetNet.IP"],
+      "instruction_pattern": [
+        { "op": "NONE", "comp": "NONE", "shift": "AND", "reg": "R4", "imm_role": "subnet_mask_32bit" },
+        { "op": "IN", "comp": "EQUAL", "shift": "NONE", "reg": "R4", "imm_role": "expected_network_32bit" }
+      ]
+    },
+    "0x02_bgp_asn_boundary": {
+      "addon_id": 2,
+      "name": "BGP Autonomous System Number (ASN) Attestation",
+      "description": "Verifies 32-bit transmitter/receiver ASN against allowed or excluded routing boundaries.",
+      "bound_registers": {
+        "live_src_asn_reg": "R6",
+        "expected_dst_asn_reg": "R7"
+      },
+      "required_lexicon": ["Operators.IN", "Operators.EXCLUDES", "Compares.EQUAL", "SourceTargetNet.ASN"],
+      "instruction_pattern": [
+        { "op": "IN", "comp": "EQUAL", "shift": "NONE", "reg": "R6", "imm_role": "allowed_asn_32bit" }
+      ]
+    },
+    "0x03_epoch_time_window": {
+      "addon_id": 3,
+      "name": "Temporal Expiration & Lease Window Check",
+      "description": "Validates that current 32-bit Unix epoch sits below expiration ceiling (or inside birthday/lease window).",
+      "bound_registers": {
+        "current_epoch_reg": "R8",
+        "expiration_ceiling_reg": "R9"
+      },
+      "required_lexicon": ["Operators.LESSER", "Operators.BIGGER", "Times.YOUNGER", "Times.PASSED", "Policy.BOUNDS"],
+      "instruction_pattern": [
+        { "op": "LESSER", "comp": "NONE", "shift": "NONE", "reg": "R8", "imm_role": "expiration_epoch_32bit" }
+      ]
+    },
+    "0x04_stateless_counter_equilibrium": {
+      "addon_id": 4,
+      "name": "Paired Ascending/Descending Counter Scale",
+      "description": "Verifies that 16-bit counter_up (R10_HI) + 16-bit counter_down (R10_LO) equals (scale - 1).",
+      "bound_registers": {
+        "counter_pair_reg": "R10"
+      },
+      "required_lexicon": ["Arithmics.UP", "Arithmics.DOWN", "Weights.SCALE", "Integrity.EXACT"],
+      "supported_scales": [16, 256, 4096, 32768, 65536]
+    },
+    "0x05_privacy_key_xor_attestation": {
+      "addon_id": 5,
+      "name": "32-Bit User Privacy Key XOR Challenge",
+      "description": "XORs presented 32-bit user privacy key with session nonce without exposing raw key on the wire.",
+      "bound_registers": {
+        "user_privacy_key_reg": "R5",
+        "challenge_nonce_reg": "R7"
+      },
+      "required_lexicon": ["Shifts.XOR", "Crypto.PRIVATE", "Crypto.IDENTITY", "Integrity.VERIFY"],
+      "instruction_pattern": [
+        { "op": "NONE", "comp": "NONE", "shift": "XOR", "reg": "R5", "imm_role": "nonce_mask_32bit" },
+        { "op": "IN", "comp": "EQUAL", "shift": "NONE", "reg": "R5", "imm_role": "expected_xor_digest_32bit" }
+      ]
+    }
+  }
+}
